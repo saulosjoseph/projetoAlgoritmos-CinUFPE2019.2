@@ -1,6 +1,5 @@
 # projetoAlgoritmos-CinUFPE2019.2
 
-Projeto 2
 Nesse projeto trabalharemos os conceitos referentes a listas encadeadas e orientação a
 objetos. Para isso, implementaremos um programa para processar os dados dos candidatos e
 seus bens declarados à Justiça Eleitoral para o pleito de 2014.
