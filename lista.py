@@ -148,10 +148,11 @@ class DoublyLinkedList:
     def show(self):
         currentNode = self.getHead()
         list = ''
-        while currentNode.getNext() is not None:
-            list += str(currentNode.getValue()) + '\n'
-            currentNode = currentNode.getNext()
-        list += str(currentNode.getValue())
+        if(currentNode is not None):
+            while currentNode.getNext() is not None:
+                list += str(currentNode.getValue()) + '\n'
+                currentNode = currentNode.getNext()
+            list += str(currentNode.getValue())
         return list
     
     def inserir(self, index, value):

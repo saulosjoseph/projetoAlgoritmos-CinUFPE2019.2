@@ -1,4 +1,6 @@
 import lista
+import locale
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 class candidato:
     def __init__(self, ANO_ELEICAO, SG_UF, CD_CARGO, DS_CARGO, NM_CANDIDATO, SQ_CANDIDATO, NR_CANDIDATO, 
@@ -72,8 +74,8 @@ class candidato:
     def __str__(self):
         texto = (self.get_NM_URNA_CANDIDATO() + ' -- ' + self.get_NR_CANDIDATO() + ' -- ' + self.get_SG_PARTIDO() + '\n' +
         self.get_DS_CARGO() + ' (' + self.get_SG_UF() + ') ' + self.get_NM_MUNICIPIO_NASCIMENTO() + ' (' + self.get_SG_UF_NASCIMENTO() +
-        ') ' + '\n' + 'Resumo dos bens: ' + '\n' + '   -Total declarado: ' + self.valor_total_bens() + '\n' + 
-        '   -Total por tipo de bem: ' + str(self.get_lista_bens()) + '\n')
+        ') ' + '\n' + 'Resumo dos bens: ' + '\n' + '   -Total declarado: R$ ' + self.valor_total_bens() + '\n' + 
+        '   -Total por tipo de bem: ' + str(self.valor_total_por_bem()) + '\n')
         return texto
     
     def __repr__(self):
@@ -90,7 +92,42 @@ class candidato:
     def valor_total_bens(self):
         bem_atual = self.get_lista_bens().getHead()
         valor_total = 0
-        while bem_atual is not None:
-            valor_total += bem_atual.get_VR_BEM_CANDIDATO()
-            bem_atual = bem_atual.getNext()
-        return valor_total
+        if(bem_atual is not None):
+            while bem_atual.getNext() is not None:
+                valor_atual = self.replace_str_index(bem_atual.getValue().get_VR_BEM_CANDIDATO(),-3,'.')
+                valor_total += float(valor_atual)
+                bem_atual = bem_atual.getNext()
+            valor_atual = self.replace_str_index(bem_atual.getValue().get_VR_BEM_CANDIDATO(),-3,'.')
+            valor_total += float(valor_atual)
+        return locale.currency(valor_total, grouping=True, symbol=None)
+
+    def valor_total_por_bem(self):
+        bem_atual = self.get_lista_bens().getHead()
+        total_por_bem = {}
+        if(bem_atual is not None):
+            while bem_atual.getNext() is not None:
+                DS_TIPO_BEM_CANDIDATO = bem_atual.getValue().get_DS_TIPO_BEM_CANDIDATO()
+                VR_BEM_CANDIDATO = bem_atual.getValue().get_VR_BEM_CANDIDATO()
+                VR_BEM_CANDIDATO = self.replace_str_index(VR_BEM_CANDIDATO, -3, '.')
+                if DS_TIPO_BEM_CANDIDATO in total_por_bem:
+                    total_por_bem[DS_TIPO_BEM_CANDIDATO] += float(VR_BEM_CANDIDATO)
+                else:
+                    total_por_bem[DS_TIPO_BEM_CANDIDATO] = float(VR_BEM_CANDIDATO)
+                bem_atual = bem_atual.getNext()
+            DS_TIPO_BEM_CANDIDATO = bem_atual.getValue().get_DS_TIPO_BEM_CANDIDATO()
+            VR_BEM_CANDIDATO = bem_atual.getValue().get_VR_BEM_CANDIDATO()
+            VR_BEM_CANDIDATO = self.replace_str_index(VR_BEM_CANDIDATO, -3, '.')
+            if DS_TIPO_BEM_CANDIDATO in total_por_bem:
+                total_por_bem[DS_TIPO_BEM_CANDIDATO] += float(VR_BEM_CANDIDATO)
+            else:
+                total_por_bem[DS_TIPO_BEM_CANDIDATO] = float(VR_BEM_CANDIDATO)
+        for tipo_bem in total_por_bem.keys():
+            total = total_por_bem[tipo_bem]
+            total = locale.currency(total, grouping=True, symbol=None)
+            total = 'R$ ' + total
+            total_por_bem[tipo_bem] = total
+        return total_por_bem
+
+    def replace_str_index(self, text,index=0,replacement=''):
+        return '%s%s%s'%(text[:index],replacement,text[index+1:])
+    

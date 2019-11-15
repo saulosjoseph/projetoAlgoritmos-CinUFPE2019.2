@@ -81,19 +81,25 @@ class controle():
 
     def encontrarCandidato(self, SQ_CANDIDATO):
         candidato_atual = self.__lista_de_candidatos.getHead()
-        while candidato_atual is not None:
-            print(candidato_atual.getValue().get_SQ_CANDIDATO())
+        while candidato_atual.getNext() is not None:            
             if(candidato_atual.getValue().get_SQ_CANDIDATO() == SQ_CANDIDATO):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
                 return candidato_atual.getValue()
             candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().get_SQ_CANDIDATO() == SQ_CANDIDATO):
+            return candidato_atual.getValue()
         return False
 
     def mostrar(self):
         print(self.__lista_de_candidatos.show())
+
+    def imprimir(self):
+        with open(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\src\execução\consulta_cand_2014_AL.txt', 'a') as the_file:
+            the_file.write(self.__lista_de_candidatos.show() + '\n')
 
 if __name__ == "__main__":
     """ This is executed when run from the command line """
     controle = controle()
     controle.carregar_candidatos(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\consulta_cand_2014\consulta_cand_2014_AL.csv')
     controle.carregar_bens(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\bem_candidato_2014\bem_candidato_2014_AL.csv')
-    controle.mostrar()
+    controle.imprimir()
