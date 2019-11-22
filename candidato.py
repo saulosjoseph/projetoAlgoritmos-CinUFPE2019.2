@@ -69,6 +69,8 @@ class candidato:
         return self.__NR_CPF_CANDIDATO()
     def get_SQ_CANDIDATO(self):
         return self.__SQ_CANDIDATO
+    def get_DS_SIT_TOT_TURNO(self):
+        return self.__DS_SIT_TOT_TURNO
     
 
     def __str__(self):

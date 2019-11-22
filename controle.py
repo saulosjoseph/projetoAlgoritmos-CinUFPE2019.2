@@ -11,13 +11,44 @@ import csv
 import candidato
 import lista
 import bem
+import cronometro
+import time
 
 class controle():
     def __init__(self):
         self.__lista_de_candidatos = lista.DoublyLinkedList()
         self.__lista_de_bens = lista.DoublyLinkedList()
+        self.__lista_de_candidatos_uf = lista.DoublyLinkedList()
+        self.__lista_de_candidatos_partido = lista.DoublyLinkedList()
+        self.__lista_de_candidato_nao_eleito = lista.DoublyLinkedList()
+        self.__lista_de_candidato_eleito = lista.DoublyLinkedList()
+        self.__lista_de_candidato_valor = lista.DoublyLinkedList()
+        self.__lista_de_candidato_cargo = lista.DoublyLinkedList()
+        self.__lista_de_candidato_cidade = lista.DoublyLinkedList()
+
+    def get_lista_de_candidatos_uf(self):
+        return self.__lista_de_candidatos_uf
+
+    def get_lista_de_candidatos_partido(self):
+        return self.__lista_de_candidatos_partido
     
-    def carregar_candidatos(self, caminho_candidatos):        
+    def get_lista_de_candidato_nao_eleito(self):
+        return self.__lista_de_candidato_nao_eleito
+
+    def get_lista_de_candidato_eleito(self):
+        return self.__lista_de_candidato_eleito
+
+    def get_lista_de_candidato_valor(self):
+        return self.__lista_de_candidato_valor
+
+    def get_lista_de_candidato_cargo(self):
+        return self.__lista_de_candidato_cargo
+
+    def get_lista_de_candidato_cidade(self):
+        return self.__lista_de_candidato_cidade
+    
+    
+    def carregar_candidatos(self, caminho_candidatos):     
         with open(caminho_candidatos) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=';')
             line_count = 0
@@ -97,9 +128,128 @@ class controle():
         with open(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\src\execução\consulta_cand_2014_AL.txt', 'a') as the_file:
             the_file.write(self.__lista_de_candidatos.show() + '\n')
 
+    def imprimirCronometro(self, tipo, tempo):
+        with open(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\src\execução\cronometro.txt', 'a') as the_file:
+            the_file.write(tipo + ': ' + tempo + '\n')
+
+    def imprimirAgora(self):
+        agora = time.asctime( time.localtime(time.time()) )
+        with open(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\src\execução\cronometro.txt', 'a') as the_file:
+            the_file.write('=====\n' + agora + '\n')
+
+    def pegarPorPartido(self, partido):
+        nova_lista_de_candidatos = self.__lista_de_candidatos_partido
+        candidato_atual = self.__lista_de_candidatos.getHead()
+        while candidato_atual.getNext() is not None:            
+            if(candidato_atual.getValue().get_SG_PARTIDO() == partido):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
+                nova_lista_de_candidatos.add(candidato_atual)
+            candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().get_SG_PARTIDO() == partido):
+            nova_lista_de_candidatos.add(candidato_atual)
+        return nova_lista_de_candidatos.show()
+
+    def pegarPorUf(self, uf):
+        nova_lista_de_candidatos = self.__lista_de_candidatos_uf
+        candidato_atual = self.__lista_de_candidatos.getHead()
+        while candidato_atual.getNext() is not None:            
+            if(candidato_atual.getValue().get_SG_UF() == uf):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
+                nova_lista_de_candidatos.add(candidato_atual)
+            candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().get_SG_UF() == uf):
+            nova_lista_de_candidatos.add(candidato_atual)
+        return nova_lista_de_candidatos.show()
+
+    def pegarPorCidade(self, cidade):
+        nova_lista_de_candidatos = self.__lista_de_candidato_cidade
+        candidato_atual = self.__lista_de_candidatos.getHead()
+        while candidato_atual.getNext() is not None:            
+            if(candidato_atual.getValue().get_NM_MUNICIPIO_NASCIMENTO() == cidade):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
+                nova_lista_de_candidatos.add(candidato_atual)
+            candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().get_NM_MUNICIPIO_NASCIMENTO() == cidade):
+            nova_lista_de_candidatos.add(candidato_atual)
+        return nova_lista_de_candidatos.show()
+
+    def pegarPorCargo(self, cargo):
+        nova_lista_de_candidatos = self.__lista_de_candidato_cargo
+        candidato_atual = self.__lista_de_candidatos.getHead()
+        while candidato_atual.getNext() is not None:            
+            if(candidato_atual.getValue().get_CD_CARGO() == cargo):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
+                nova_lista_de_candidatos.add(candidato_atual)
+            candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().get_CD_CARGO() == cargo):
+            nova_lista_de_candidatos.add(candidato_atual)
+        return nova_lista_de_candidatos.show()
+
+    def pegarPorValor(self, valor):
+        valor = 'R$ ' + valor
+        nova_lista_de_candidatos = self.__lista_de_candidato_valor
+        candidato_atual = self.__lista_de_candidatos.getHead()
+        while candidato_atual.getNext() is not None:            
+            if(candidato_atual.getValue().valor_total_bens() < valor):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
+                nova_lista_de_candidatos.add(candidato_atual)
+            candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().valor_total_bens() < valor):
+            nova_lista_de_candidatos.add(candidato_atual)
+        return nova_lista_de_candidatos.show()
+
+    def pegarEleito(self):
+        valor = 'R$ ' + valor
+        nova_lista_de_candidatos = self.__lista_de_candidato_eleito
+        candidato_atual = self.__lista_de_candidatos.getHead()
+        while candidato_atual.getNext() is not None:            
+            if(candidato_atual.getValue().get_DS_SIT_TOT_TURNO() == 'ELEITO'):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
+                nova_lista_de_candidatos.add(candidato_atual)
+            candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().get_DS_SIT_TOT_TURNO() == 'ELEITO'):
+            nova_lista_de_candidatos.add(candidato_atual)
+        return nova_lista_de_candidatos.show()
+
+    def pegarNaoEleito(self):
+        valor = 'R$ ' + valor
+        nova_lista_de_candidatos = self.__lista_de_candidato_nao_eleito
+        candidato_atual = self.__lista_de_candidatos.getHead()
+        while candidato_atual.getNext() is not None:            
+            if(candidato_atual.getValue().get_DS_SIT_TOT_TURNO() is not 'ELEITO'):
+                #print(candidato_atual.getValue().get_SQ_CANDIDATO())
+                nova_lista_de_candidatos.add(candidato_atual)
+            candidato_atual = candidato_atual.getNext()
+        if(candidato_atual.getValue().get_DS_SIT_TOT_TURNO() is not 'ELEITO'):
+            nova_lista_de_candidatos.add(candidato_atual)
+        return nova_lista_de_candidatos.show()
+
+        
+
+
 if __name__ == "__main__":
     """ This is executed when run from the command line """
+    cronometro_total = cronometro.Cronometro()
+    cronometro_total.iniciar()
+    cronometro = cronometro.Cronometro()
     controle = controle()
+    controle.imprimirAgora()
+    cronometro.iniciar()
     controle.carregar_candidatos(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\consulta_cand_2014\consulta_cand_2014_AL.csv')
+    cronometro.parar()
+    controle.imprimirCronometro('carregar candidatos', cronometro.exibir())
+    cronometro.zerar()
+    cronometro.iniciar()
     controle.carregar_bens(r'C:\Users\Agile\Documents\UFPE\algoritmos\PROJETO\bem_candidato_2014\bem_candidato_2014_AL.csv')
+    cronometro.parar()
+    controle.imprimirCronometro('carregar bens', cronometro.exibir())
+    cronometro.zerar()
+    cronometro.iniciar()
     controle.imprimir()
+    cronometro.parar()
+    controle.imprimirCronometro('imprimir', cronometro.exibir())
+    controle.pegarPorPartido('PCB')
+    print(controle.get_lista_de_candidatos_partido())
+    cronometro_total.parar()
+    controle.imprimirCronometro('total', cronometro_total.exibir())
+    
